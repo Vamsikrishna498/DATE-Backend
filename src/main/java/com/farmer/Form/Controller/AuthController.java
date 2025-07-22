@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -52,6 +54,7 @@ public class AuthController {
             User user = userService.getUserByEmailOrPhone(request.getUserName());
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
+            response.put("role", user.getRole().name()); // Add role to response
             response.put("message", "Login successful");
             response.put("forcePasswordChange", user.isForcePasswordChange()); // <-- Add this line
             return ResponseEntity.ok(response);
@@ -224,6 +227,7 @@ public class AuthController {
     }
 
     // ✅ Approve user and assign role (Super Admin)
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     @PutMapping("/users/{id}/approve")
     public ResponseEntity<String> approveAndAssignRole(@PathVariable Long id, @RequestBody Map<String, String> request) {
         String role = request.get("role");

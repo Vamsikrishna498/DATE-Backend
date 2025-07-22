@@ -44,10 +44,10 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // 🔓 TEMPORARILY ALLOW ALL REQUESTS FOR TESTING
-                .anyRequest().permitAll()
-            );
-            // .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .requestMatchers("/api/auth/**", "/error").permitAll() // Public endpoints
+                .anyRequest().authenticated() // All other endpoints require authentication
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
