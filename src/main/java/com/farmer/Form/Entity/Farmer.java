@@ -1,9 +1,10 @@
 package com.farmer.Form.Entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "farmers")
@@ -11,85 +12,89 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class Farmer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // File uploads (replacing Base64 fields)
-    private String photoFileName;
-    private String passbookFileName;
-    private String documentFileName;
-    private String soilTestCertificateFileName;
-
-    // Personal Info
-    @NotBlank private String salutation;
+    
+    // Personal Information (Step 0)
     private String firstName;
     private String middleName;
-    @NotBlank private String lastName;
-    @NotNull private LocalDate dateOfBirth;
-    @NotNull private String gender;
+    private String lastName;
+    private String gender;
+    private String salutation;
+    private String nationality;
+    private LocalDate dateOfBirth;
     private String fatherName;
-    @Pattern(regexp="^\\d{10}$") private String contactNumber;
+    private String contactNumber;
+    private String alternativeContactNumber;
     private String alternativeRelationType;
-    @Pattern(regexp="^\\d{10}$") private String alternativeContactNumber;
-    @NotBlank private String nationality;
-
-    // Address
-    @NotBlank private String country;
+    private String alternativeType;
+    private String alternativeNumber;
+    
+    // Photo fields (support multiple naming conventions)
+    private String photoFileName;        // e.g., "farmer_123.jpg"
+    private String photoUrl;             // e.g., "/uploads/farmer_123.jpg"
+    private String photoFilePath;
+    
+    // Address (Step 1)
+    private String country;
     private String state;
     private String district;
     private String block;
+    private String mandal;
     private String village;
-    @Pattern(regexp="^\\d{6}$") private String pincode;
-
-    // Professional Info
+    private String pincode;
+    
+    // Professional Information (Step 2)
     private String education;
     private String experience;
-
-    // Current Crop
-    private String cropPhoto;
-    private String currentSurveyNumber;
-    private Double currentLandHolding;
-    private String currentGeoTag;
-    private String currentCrop;
-    private Double currentNetIncome;
-    private Boolean currentSoilTest;
-
-    // Proposed Crop
-    private String proposedSurveyNumber;
-    private Double proposedLandHolding;
-    private String proposedGeoTag;
-    private String proposedCrop;
-    private Double proposedNetIncome;
-    private Boolean proposedSoilTest;
-    private String proposedSoilTestCertificate;
-
-    // Irrigation
-    private String currentWaterSource;
-    private String currentDischargeLPH;
-    private String currentSummerDischarge;
-    private String currentBorewellLocation;
-    private String proposedWaterSource;
-    private String proposedDischargeLPH;
-    private String proposedSummerDischarge;
-    private String proposedBorewellLocation;
-
-    // Bank Details
+    
+    // Current Crop Information (Step 3)
+    private String surveyNumber;
+    private String totalLandHolding;
+    private String geoTag;
+    private String selectCrop;
+    private String cropName;
+    private String cropCategory;
+    private String netIncome;
+    private String soilTest;
+    private String soilTestCertificateFileName;
+    
+    // Proposed Crop Information (Step 4)
+    private String cropType;
+    
+    // Irrigation Details (Step 5)
+    private String waterSource;
+    private String borewellDischarge;
+    private String summerDischarge;
+    private String borewellLocation;
+    
+    // Bank Details (Step 6)
     private String bankName;
     private String accountNumber;
     private String branchName;
     private String ifscCode;
-
-    // Document
-    private String documentType;
-    private String documentNumber;
-
-    // Portal Info
-    private String portalRole;
-    private String portalAccess;
-
+    private String passbookFileName;
+    
+    // Documents (Step 7)
+    private String aadharNumber;
+    private String panNumber;
+    private String voterId;
+    private String ppbNumber;
+    private String aadhaarFileName;
+    private String panFileName;
+    private String voterFileName;
+    private String voterIdFileName;
+    private String ppbFileName;
+    
+    // Timestamps
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    
     // Assignment
     @ManyToOne
     private Employee assignedEmployee;

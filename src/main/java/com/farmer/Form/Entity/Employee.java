@@ -3,6 +3,7 @@ package com.farmer.Form.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import com.fasterxml.jackson.annotation.JsonFormat;
  
 @Entity
 @Data
@@ -22,9 +23,16 @@ public class Employee {
     private String lastName;
     private String gender;
     private String nationality;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
+    
     private String photoFileName;
- 
+    
+    // For API response compatibility
+    @Transient
+    private String photoUrl;
+
     // Contact Details
     private String contactNumber;
     private String email;
@@ -63,5 +71,14 @@ public class Employee {
     // Portal Access
     private String role;
     private String accessStatus;
+    
+    // Helper method to set photoUrl from photoFileName
+    public void setPhotoUrlFromFileName() {
+        if (this.photoFileName != null && !this.photoFileName.startsWith("http")) {
+            this.photoUrl = "/uploads/photos/" + this.photoFileName;
+        } else if (this.photoFileName != null) {
+            this.photoUrl = this.photoFileName;
+        }
+    }
 }
  
