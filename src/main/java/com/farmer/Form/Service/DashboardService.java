@@ -27,17 +27,16 @@ public class DashboardService {
     
     // Super Admin Dashboard Stats
     public DashboardStatsDTO getSuperAdminDashboardStats() {
-        DashboardStatsDTO stats = DashboardStatsDTO.builder()
-            .totalFarmers(userRepository.countByRole(Role.FARMER))
-            .totalEmployees(userRepository.countByRole(Role.EMPLOYEE))
-            .pendingUsers(userRepository.countByStatus(UserStatus.PENDING))
-            .approvedUsers(userRepository.countByStatus(UserStatus.APPROVED))
-            .totalFPO(userRepository.countByRole(Role.FPO))
-            .pendingEmployees(userRepository.countByRoleAndStatus(Role.EMPLOYEE, UserStatus.PENDING))
-            .pendingFarmers(userRepository.countByRoleAndStatus(Role.FARMER, UserStatus.PENDING))
-            .approvedEmployees(userRepository.countByRoleAndStatus(Role.EMPLOYEE, UserStatus.APPROVED))
-            .approvedFarmers(userRepository.countByRoleAndStatus(Role.FARMER, UserStatus.APPROVED))
-            .build();
+        DashboardStatsDTO stats = new DashboardStatsDTO();
+        stats.setTotalFarmers(userRepository.countByRole(Role.FARMER));
+        stats.setTotalEmployees(userRepository.countByRole(Role.EMPLOYEE));
+        stats.setPendingUsers(userRepository.countByStatus(UserStatus.PENDING));
+        stats.setApprovedUsers(userRepository.countByStatus(UserStatus.APPROVED));
+        stats.setTotalFPO(userRepository.countByRole(Role.FPO));
+        stats.setPendingEmployees(userRepository.countByRoleAndStatus(Role.EMPLOYEE, UserStatus.PENDING));
+        stats.setPendingFarmers(userRepository.countByRoleAndStatus(Role.FARMER, UserStatus.PENDING));
+        stats.setApprovedEmployees(userRepository.countByRoleAndStatus(Role.EMPLOYEE, UserStatus.APPROVED));
+        stats.setApprovedFarmers(userRepository.countByRoleAndStatus(Role.FARMER, UserStatus.APPROVED));
         return stats;
     }
     
@@ -52,10 +51,9 @@ public class DashboardService {
         List<EmployeeStatsDTO> stats = new ArrayList<>();
         
         for (User employee : employees) {
-            EmployeeStatsDTO empStats = EmployeeStatsDTO.builder()
-                .id(employee.getId())
-                .name(employee.getName())
-                .build();
+            EmployeeStatsDTO empStats = new EmployeeStatsDTO();
+            empStats.setId(employee.getId());
+            empStats.setName(employee.getName());
             
             List<User> assignedFarmers = userRepository.findByAssignedEmployeeId(employee.getId());
             empStats.setTotalAssigned((long) assignedFarmers.size());
@@ -81,9 +79,8 @@ public class DashboardService {
     
     // Todo Items
     public TodoItemsDTO getTodoItems() {
-        TodoItemsDTO todo = TodoItemsDTO.builder()
-            .unassignedFarmers(userRepository.countByRoleAndAssignedEmployeeIdIsNull(Role.FARMER))
-            .build();
+        TodoItemsDTO todo = new TodoItemsDTO();
+        todo.setUnassignedFarmers(userRepository.countByRoleAndAssignedEmployeeIdIsNull(Role.FARMER));
         
         // Overdue KYC (pending for 3+ days)
         LocalDateTime threeDaysAgo = LocalDateTime.now().minusDays(3);

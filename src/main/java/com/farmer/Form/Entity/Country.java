@@ -9,7 +9,6 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Country {
  
     @Id
@@ -26,6 +25,6 @@ public class Country {
     private String dialCode; // Dial code
  
     @Column(nullable = false)
-    private boolean active; // Active status
+    private boolean active = true; // Active status
 }
  

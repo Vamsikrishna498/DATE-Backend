@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @RestController
@@ -223,6 +224,14 @@ public class AdminController {
         stats.put("kycCompletionRate", totalFarmers > 0 ? (double) approvedKyc / totalFarmers * 100 : 0);
         
         return ResponseEntity.ok(stats);
+    }
+
+    // Get all users (for admin dashboard)
+    @GetMapping("/users")
+    public ResponseEntity<List<Map<String, Object>>> getAllUsers() {
+        // This endpoint is needed for admin dashboard to show user registrations
+        // For now, return empty list as admin shouldn't manage users directly
+        return ResponseEntity.ok(new ArrayList<>());
     }
 
     // Filter farmers by state/district

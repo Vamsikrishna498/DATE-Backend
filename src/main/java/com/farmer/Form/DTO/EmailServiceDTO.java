@@ -1,8 +1,5 @@
 package com.farmer.Form.DTO;
 
-import lombok.Builder;
- 
-@Builder
  
 public class EmailServiceDTO {
  

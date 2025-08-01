@@ -4,42 +4,39 @@ import com.farmer.Form.DTO.EmployeeDTO;
 import com.farmer.Form.Entity.Employee;
  
 public class EmployeeMapper {
-    public static Employee toEntity(EmployeeDTO dto, String photoFile, String passbookFile, String docFile) {
-        return Employee.builder()
-                .salutation(dto.getSalutation())
-                .firstName(dto.getFirstName())
-                .middleName(dto.getMiddleName())
-                .lastName(dto.getLastName())
-                .gender(dto.getGender())
-                .nationality(dto.getNationality())
-                .dob(dto.getDob())
-                .contactNumber(dto.getContactNumber())
-                .email(dto.getEmail())
-                .relationType(dto.getRelationType())
-                .relationName(dto.getRelationName())
-                .altNumber(dto.getAltNumber())
-                .altNumberType(dto.getAltNumberType())
-                .country(dto.getCountry())
-                .state(dto.getState())
-                .district(dto.getDistrict())
-                .block(dto.getBlock())
-                .village(dto.getVillage())
-                .zipcode(dto.getZipcode())
-                .sector(dto.getSector())
-                .education(dto.getEducation())
-                .experience(dto.getExperience())
-                .bankName(dto.getBankName())
-                .accountNumber(dto.getAccountNumber())
-                .branchName(dto.getBranchName())
-                .ifscCode(dto.getIfscCode())
-                .documentType(dto.getDocumentType())
-                .documentNumber(dto.getDocumentNumber())
-                .role(dto.getRole())
-                .accessStatus(dto.getAccessStatus())
-                .photoFileName(photoFile)
-                .passbookFileName(passbookFile)
-                .documentFileName(docFile)
-                .build();
+    public static Employee toEntity(EmployeeDTO dto) {
+        Employee employee = new Employee();
+        employee.setSalutation(dto.getSalutation());
+        employee.setFirstName(dto.getFirstName());
+        employee.setMiddleName(dto.getMiddleName());
+        employee.setLastName(dto.getLastName());
+        employee.setGender(dto.getGender());
+        employee.setNationality(dto.getNationality());
+        employee.setDob(dto.getDob());
+        employee.setContactNumber(dto.getContactNumber());
+        employee.setEmail(dto.getEmail());
+        employee.setRelationType(dto.getRelationType());
+        employee.setRelationName(dto.getRelationName());
+        employee.setAltNumber(dto.getAltNumber());
+        employee.setAltNumberType(dto.getAltNumberType());
+        employee.setCountry(dto.getCountry());
+        employee.setState(dto.getState());
+        employee.setDistrict(dto.getDistrict());
+        employee.setBlock(dto.getBlock());
+        employee.setVillage(dto.getVillage());
+        employee.setZipcode(dto.getZipcode());
+        employee.setSector(dto.getSector());
+        employee.setEducation(dto.getEducation());
+        employee.setExperience(dto.getExperience());
+        employee.setBankName(dto.getBankName());
+        employee.setAccountNumber(dto.getAccountNumber());
+        employee.setBranchName(dto.getBranchName());
+        employee.setIfscCode(dto.getIfscCode());
+        employee.setDocumentType(dto.getDocumentType());
+        employee.setDocumentNumber(dto.getDocumentNumber());
+        employee.setRole(dto.getRole());
+        employee.setAccessStatus(dto.getAccessStatus());
+        return employee;
     }
 }
  

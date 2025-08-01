@@ -24,17 +24,16 @@ public class FormApplication {
 		return args -> {
 			String superAdminEmail = "projecthinfintiy@12.in";
 			if (userRepository.findByEmail(superAdminEmail).isEmpty()) {
-				User superAdmin = User.builder()
-						.name("Super")
-						.email(superAdminEmail)
-						.phoneNumber("9999999999")
-						.password(passwordEncoder.encode("Password123@"))
-						.dateOfBirth(LocalDate.of(1990, 1, 1))
-						.gender("Other")
-						.role(Role.SUPER_ADMIN)
-						.status(UserStatus.APPROVED)
-						.forcePasswordChange(false)
-						.build();
+				User superAdmin = new User();
+				superAdmin.setName("Super");
+				superAdmin.setEmail(superAdminEmail);
+				superAdmin.setPhoneNumber("9999999999");
+				superAdmin.setPassword(passwordEncoder.encode("Password123@"));
+				superAdmin.setDateOfBirth(LocalDate.of(1990, 1, 1));
+				superAdmin.setGender("Other");
+				superAdmin.setRole(Role.SUPER_ADMIN);
+				superAdmin.setStatus(UserStatus.APPROVED);
+				superAdmin.setForcePasswordChange(false);
 				userRepository.save(superAdmin);
 				System.out.println("Super admin created with email: " + superAdminEmail);
 			}

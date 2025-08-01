@@ -33,16 +33,24 @@ public class FarmerServiceImpl implements FarmerService {
         try {
             String photoFile = (photo != null && !photo.isEmpty())
                     ? fileStorageService.storeFile(photo, "photos") : null;
+
             String passbookFile = (passbookPhoto != null && !passbookPhoto.isEmpty())
                     ? fileStorageService.storeFile(passbookPhoto, "passbooks") : null;
+
             String aadhaarFile = (aadhaar != null && !aadhaar.isEmpty())
                     ? fileStorageService.storeFile(aadhaar, "documents") : null;
+
             String soilTestFile = (soilTestCertificate != null && !soilTestCertificate.isEmpty())
                     ? fileStorageService.storeFile(soilTestCertificate, "soil-tests") : null;
 
-            Farmer farmer = FarmerMapper.toEntity(dto, photoFile, passbookFile, aadhaarFile, soilTestFile);
+            Farmer farmer = FarmerMapper.toEntity(dto);
+            farmer.setPhotoFileName(photoFile);
+            farmer.setPassbookFileName(passbookFile);
+            farmer.setDocumentFileName(aadhaarFile);
+            farmer.setSoilTestCertificateFileName(soilTestFile);
+            
             Farmer saved = farmerRepository.save(farmer);
-            return FarmerMapper.toDto(saved);
+            return FarmerMapper.toDTO(saved);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to store uploaded files", e);
@@ -52,14 +60,14 @@ public class FarmerServiceImpl implements FarmerService {
     @Override
     public FarmerDTO getFarmerById(Long id) {
         return farmerRepository.findById(id)
-                .map(FarmerMapper::toDto)
+                .map(FarmerMapper::toDTO)
                 .orElseThrow(() -> new RuntimeException("Farmer not found"));
     }
 
     @Override
     public List<FarmerDTO> getAllFarmers() {
         return farmerRepository.findAll().stream()
-                .map(FarmerMapper::toDto)
+                .map(FarmerMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -88,11 +96,15 @@ public class FarmerServiceImpl implements FarmerService {
                     ? fileStorageService.storeFile(soilTestCertificate, "soil-tests")
                     : existing.getSoilTestCertificateFileName();
 
-            Farmer updated = FarmerMapper.toEntity(dto, photoFile, passbookFile, aadhaarFile, soilTestFile);
+            Farmer updated = FarmerMapper.toEntity(dto);
             updated.setId(existing.getId());
+            updated.setPhotoFileName(photoFile);
+            updated.setPassbookFileName(passbookFile);
+            updated.setDocumentFileName(aadhaarFile);
+            updated.setSoilTestCertificateFileName(soilTestFile);
 
             Farmer saved = farmerRepository.save(updated);
-            return FarmerMapper.toDto(saved);
+            return FarmerMapper.toDTO(saved);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to update files", e);
@@ -104,14 +116,14 @@ public class FarmerServiceImpl implements FarmerService {
         Farmer existing = farmerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Farmer not found"));
 
-        Farmer updated = FarmerMapper.toEntity(dto,
-                existing.getPhotoFileName(),
-                existing.getPassbookFileName(),
-                existing.getDocumentFileName(),
-                existing.getSoilTestCertificateFileName());
-
+        Farmer updated = FarmerMapper.toEntity(dto);
         updated.setId(existing.getId());
-        return FarmerMapper.toDto(farmerRepository.save(updated));
+        updated.setPhotoFileName(existing.getPhotoFileName());
+        updated.setPassbookFileName(existing.getPassbookFileName());
+        updated.setDocumentFileName(existing.getDocumentFileName());
+        updated.setSoilTestCertificateFileName(existing.getSoilTestCertificateFileName());
+
+        return FarmerMapper.toDTO(farmerRepository.save(updated));
     }
 
     @Override

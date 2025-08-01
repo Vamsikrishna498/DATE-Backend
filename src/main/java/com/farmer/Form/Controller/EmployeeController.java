@@ -42,7 +42,11 @@ public class EmployeeController {
             String passbookFile = fileStorageService.storeFile(dto.getPassbook(), "passbooks");
             String docFile = fileStorageService.storeFile(dto.getDocumentFile(), "documents");
  
-            Employee employee = EmployeeMapper.toEntity(dto, photoFile, passbookFile, docFile);
+            Employee employee = EmployeeMapper.toEntity(dto);
+            employee.setPhotoFileName(photoFile);
+            employee.setPassbookFileName(passbookFile);
+            employee.setDocumentFileName(docFile);
+            
             Employee saved = employeeService.saveEmployee(employee);
             return ResponseEntity.ok(saved);
  
@@ -77,8 +81,12 @@ public class EmployeeController {
             String passbookFile = dto.getPassbook() != null ? fileStorageService.storeFile(dto.getPassbook(), "passbooks") : existing.getPassbookFileName();
             String docFile = dto.getDocumentFile() != null ? fileStorageService.storeFile(dto.getDocumentFile(), "documents") : existing.getDocumentFileName();
  
-            Employee updated = EmployeeMapper.toEntity(dto, photoFile, passbookFile, docFile);
+            Employee updated = EmployeeMapper.toEntity(dto);
             updated.setId(id);
+            updated.setPhotoFileName(photoFile);
+            updated.setPassbookFileName(passbookFile);
+            updated.setDocumentFileName(docFile);
+            
             Employee saved = employeeService.saveEmployee(updated);
  
             return ResponseEntity.ok(saved);

@@ -1,10 +1,8 @@
 package com.farmer.Form.DTO;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class UserResponseDTO {
     private Long id;
     private String name;
@@ -17,17 +15,17 @@ public class UserResponseDTO {
     private boolean forcePasswordChange;
 
     public static UserResponseDTO fromEntity(com.farmer.Form.Entity.User user) {
-        return UserResponseDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .phoneNumber(user.getPhoneNumber())
-                .gender(user.getGender())
-                .role(user.getRole().name())
-                .dateOfBirth(user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null)
-                .email(user.getEmail())
-                .status(user.getStatus() != null ? user.getStatus().name() : null)
-                .forcePasswordChange(user.isForcePasswordChange())
-                .build();
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setPhoneNumber(user.getPhoneNumber());
+        dto.setGender(user.getGender());
+        dto.setRole(user.getRole().name());
+        dto.setDateOfBirth(user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : null);
+        dto.setEmail(user.getEmail());
+        dto.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
+        dto.setForcePasswordChange(user.isForcePasswordChange());
+        return dto;
     }
 }
  

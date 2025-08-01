@@ -2,7 +2,6 @@ package com.farmer.Form.Service;
 
 
  
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.farmer.Form.DTO.EmailServiceDTO;
  
-@Builder
 @Slf4j
 @Service
 public class EmailService {

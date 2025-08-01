@@ -161,11 +161,11 @@ public class UserService {
                     + "If this was not you, please contact support immediately.\n\n"
                     + "Regards,\nFarmer Management Team";
  
-            emailService.sendEmail(EmailServiceDTO.builder()
-                    .to(user.getEmail())
-                    .subject(subject)
-                    .body(body)
-                    .build());
+            EmailServiceDTO emailDto = new EmailServiceDTO();
+            emailDto.setTo(user.getEmail());
+            emailDto.setSubject(subject);
+            emailDto.setBody(body);
+            emailService.sendEmail(emailDto);
  
         } catch (Exception e) {
             log.error("Failed to send password reset email: {}", e.getMessage());
@@ -271,11 +271,11 @@ public class UserService {
                     + "Your password has been successfully reset.\n"
                     + "If this was not you, please contact support immediately.\n\n"
                     + "Regards,\nFarmer Management Team";
-            emailService.sendEmail(EmailServiceDTO.builder()
-                    .to(user.getEmail())
-                    .subject(subject)
-                    .body(body)
-                    .build());
+            EmailServiceDTO emailDto = new EmailServiceDTO();
+            emailDto.setTo(user.getEmail());
+            emailDto.setSubject(subject);
+            emailDto.setBody(body);
+            emailService.sendEmail(emailDto);
         } catch (Exception e) {
             log.error("Failed to send password reset email: {}", e.getMessage());
         }
@@ -344,10 +344,10 @@ public class UserService {
             throw new IllegalArgumentException("Email cannot be empty.");
         }
         otpService.generateAndSendOtp(email);
-        emailService.sendEmail(EmailServiceDTO.builder()
-            .to(email)
-            .subject("Your OTP Code")
-            .body("Your new OTP has been sent to this email.")
-            .build());
+        EmailServiceDTO emailDto = new EmailServiceDTO();
+        emailDto.setTo(email);
+        emailDto.setSubject("Your OTP Code");
+        emailDto.setBody("Your new OTP has been sent to this email.");
+        emailService.sendEmail(emailDto);
     }
 }

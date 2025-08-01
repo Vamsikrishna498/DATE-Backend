@@ -30,6 +30,24 @@ public class SuperAdminController {
     private final EmployeeService employeeService;
     private final DashboardService dashboardService;
 
+    // Health check endpoint
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("Super Admin Controller is working!");
+    }
+
+    // Simple test endpoint for dashboard stats
+    @GetMapping("/dashboard/stats-simple")
+    public ResponseEntity<Map<String, Object>> getDashboardStatsSimple() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalFarmers", 0);
+        stats.put("totalEmployees", 0);
+        stats.put("pendingUsers", 0);
+        stats.put("approvedUsers", 0);
+        stats.put("totalFPO", 0);
+        return ResponseEntity.ok(stats);
+    }
+
     // --- USER CRUD ---
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
@@ -202,6 +220,23 @@ public class SuperAdminController {
             return ResponseEntity.ok(users);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Assign farmers to employees (for super admin dashboard)
+    @PostMapping("/dashboard/assign-farmers")
+    public ResponseEntity<String> assignFarmersToEmployee(@RequestBody Map<String, Object> request) {
+        try {
+            List<Long> farmerIds = (List<Long>) request.get("farmerIds");
+            Long employeeId = Long.valueOf(request.get("employeeId").toString());
+            
+            for (Long farmerId : farmerIds) {
+                farmerService.assignFarmerToEmployee(farmerId, employeeId);
+            }
+            
+            return ResponseEntity.ok(farmerIds.size() + " farmers assigned successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error assigning farmers: " + e.getMessage());
         }
     }
 } 

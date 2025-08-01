@@ -5,127 +5,63 @@ import com.farmer.Form.Entity.Farmer;
 
 public class FarmerMapper {
 
-    public static FarmerDTO toDto(Farmer farmer) {
-        if (farmer == null) return null;
-
-        return FarmerDTO.builder()
-                .id(farmer.getId())
-                .photoFileName(farmer.getPhotoFileName())
-                .passbookFileName(farmer.getPassbookFileName())
-                .documentFileName(farmer.getDocumentFileName())
-                .soilTestCertificateFileName(farmer.getSoilTestCertificateFileName())
-                // map all other fields...
-                .salutation(farmer.getSalutation())
-                .firstName(farmer.getFirstName())
-                .middleName(farmer.getMiddleName())
-                .lastName(farmer.getLastName())
-                .dateOfBirth(farmer.getDateOfBirth())
-                .gender(farmer.getGender())
-                .fatherName(farmer.getFatherName())
-                .contactNumber(farmer.getContactNumber())
-                .alternativeRelationType(farmer.getAlternativeRelationType())
-                .alternativeContactNumber(farmer.getAlternativeContactNumber())
-                .nationality(farmer.getNationality())
-                .country(farmer.getCountry())
-                .state(farmer.getState())
-                .district(farmer.getDistrict())
-                .block(farmer.getBlock())
-                .village(farmer.getVillage())
-                .pincode(farmer.getPincode())
-                .education(farmer.getEducation())
-                .experience(farmer.getExperience())
-                .cropPhoto(farmer.getCropPhoto())
-                .currentSurveyNumber(farmer.getCurrentSurveyNumber())
-                .currentLandHolding(farmer.getCurrentLandHolding())
-                .currentGeoTag(farmer.getCurrentGeoTag())
-                .currentCrop(farmer.getCurrentCrop())
-                .currentNetIncome(farmer.getCurrentNetIncome())
-                .currentSoilTest(farmer.getCurrentSoilTest())
-                .proposedSurveyNumber(farmer.getProposedSurveyNumber())
-                .proposedLandHolding(farmer.getProposedLandHolding())
-                .proposedGeoTag(farmer.getProposedGeoTag())
-                .proposedCrop(farmer.getProposedCrop())
-                .proposedNetIncome(farmer.getProposedNetIncome())
-                .proposedSoilTest(farmer.getProposedSoilTest())
-                .proposedSoilTestCertificate(farmer.getProposedSoilTestCertificate())
-                .currentWaterSource(farmer.getCurrentWaterSource())
-                .currentDischargeLPH(farmer.getCurrentDischargeLPH())
-                .currentSummerDischarge(farmer.getCurrentSummerDischarge())
-                .currentBorewellLocation(farmer.getCurrentBorewellLocation())
-                .proposedWaterSource(farmer.getProposedWaterSource())
-                .proposedDischargeLPH(farmer.getProposedDischargeLPH())
-                .proposedSummerDischarge(farmer.getProposedSummerDischarge())
-                .proposedBorewellLocation(farmer.getProposedBorewellLocation())
-                .bankName(farmer.getBankName())
-                .accountNumber(farmer.getAccountNumber())
-                .branchName(farmer.getBranchName())
-                .ifscCode(farmer.getIfscCode())
-                .documentType(farmer.getDocumentType())
-                .documentNumber(farmer.getDocumentNumber())
-                .portalRole(farmer.getPortalRole())
-                .portalAccess(farmer.getPortalAccess())
-                .build();
+    public static FarmerDTO toDTO(Farmer farmer) {
+        FarmerDTO dto = new FarmerDTO();
+        dto.setId(farmer.getId());
+        dto.setFirstName(farmer.getFirstName());
+        dto.setMiddleName(farmer.getMiddleName());
+        dto.setLastName(farmer.getLastName());
+        dto.setDateOfBirth(farmer.getDateOfBirth());
+        dto.setGender(farmer.getGender());
+        dto.setContactNumber(farmer.getContactNumber());
+        dto.setAlternativeContactNumber(farmer.getAlternativeContactNumber());
+        dto.setNationality(farmer.getNationality());
+        dto.setCountry(farmer.getCountry());
+        dto.setState(farmer.getState());
+        dto.setDistrict(farmer.getDistrict());
+        dto.setBlock(farmer.getBlock());
+        dto.setVillage(farmer.getVillage());
+        dto.setPincode(farmer.getPincode());
+        dto.setEducation(farmer.getEducation());
+        dto.setExperience(farmer.getExperience());
+        dto.setCurrentCrop(farmer.getCurrentCrop());
+        dto.setProposedCrop(farmer.getProposedCrop());
+        dto.setBankName(farmer.getBankName());
+        dto.setAccountNumber(farmer.getAccountNumber());
+        dto.setBranchName(farmer.getBranchName());
+        dto.setIfscCode(farmer.getIfscCode());
+        dto.setDocumentType(farmer.getDocumentType());
+        dto.setDocumentNumber(farmer.getDocumentNumber());
+        return dto;
     }
 
-    public static Farmer toEntity(FarmerDTO dto, String photoFileName, String passbookFileName, String documentFileName, String soilTestCertificateFileName) {
-        if (dto == null) return null;
-
-        return Farmer.builder()
-                .id(dto.getId())
-                .photoFileName(photoFileName)
-                .passbookFileName(passbookFileName)
-                .documentFileName(documentFileName)
-                .soilTestCertificateFileName(soilTestCertificateFileName)
-                // map all other fields...
-                .salutation(dto.getSalutation())
-                .firstName(dto.getFirstName())
-                .middleName(dto.getMiddleName())
-                .lastName(dto.getLastName())
-                .dateOfBirth(dto.getDateOfBirth())
-                .gender(dto.getGender())
-                .fatherName(dto.getFatherName())
-                .contactNumber(dto.getContactNumber())
-                .alternativeRelationType(dto.getAlternativeRelationType())
-                .alternativeContactNumber(dto.getAlternativeContactNumber())
-                .nationality(dto.getNationality())
-                .country(dto.getCountry())
-                .state(dto.getState())
-                .district(dto.getDistrict())
-                .block(dto.getBlock())
-                .village(dto.getVillage())
-                .pincode(dto.getPincode())
-                .education(dto.getEducation())
-                .experience(dto.getExperience())
-                .cropPhoto(dto.getCropPhoto())
-                .currentSurveyNumber(dto.getCurrentSurveyNumber())
-                .currentLandHolding(dto.getCurrentLandHolding())
-                .currentGeoTag(dto.getCurrentGeoTag())
-                .currentCrop(dto.getCurrentCrop())
-                .currentNetIncome(dto.getCurrentNetIncome())
-                .currentSoilTest(dto.getCurrentSoilTest())
-                .proposedSurveyNumber(dto.getProposedSurveyNumber())
-                .proposedLandHolding(dto.getProposedLandHolding())
-                .proposedGeoTag(dto.getProposedGeoTag())
-                .proposedCrop(dto.getProposedCrop())
-                .proposedNetIncome(dto.getProposedNetIncome())
-                .proposedSoilTest(dto.getProposedSoilTest())
-                .proposedSoilTestCertificate(dto.getProposedSoilTestCertificate())
-                .currentWaterSource(dto.getCurrentWaterSource())
-                .currentDischargeLPH(dto.getCurrentDischargeLPH())
-                .currentSummerDischarge(dto.getCurrentSummerDischarge())
-                .currentBorewellLocation(dto.getCurrentBorewellLocation())
-                .proposedWaterSource(dto.getProposedWaterSource())
-                .proposedDischargeLPH(dto.getProposedDischargeLPH())
-                .proposedSummerDischarge(dto.getProposedSummerDischarge())
-                .proposedBorewellLocation(dto.getProposedBorewellLocation())
-                .bankName(dto.getBankName())
-                .accountNumber(dto.getAccountNumber())
-                .branchName(dto.getBranchName())
-                .ifscCode(dto.getIfscCode())
-                .documentType(dto.getDocumentType())
-                .documentNumber(dto.getDocumentNumber())
-                .portalRole(dto.getPortalRole())
-                .portalAccess(dto.getPortalAccess())
-                .build();
+    public static Farmer toEntity(FarmerDTO dto) {
+        Farmer farmer = new Farmer();
+        farmer.setId(dto.getId());
+        farmer.setFirstName(dto.getFirstName());
+        farmer.setMiddleName(dto.getMiddleName());
+        farmer.setLastName(dto.getLastName());
+        farmer.setDateOfBirth(dto.getDateOfBirth());
+        farmer.setGender(dto.getGender());
+        farmer.setContactNumber(dto.getContactNumber());
+        farmer.setAlternativeContactNumber(dto.getAlternativeContactNumber());
+        farmer.setNationality(dto.getNationality());
+        farmer.setCountry(dto.getCountry());
+        farmer.setState(dto.getState());
+        farmer.setDistrict(dto.getDistrict());
+        farmer.setBlock(dto.getBlock());
+        farmer.setVillage(dto.getVillage());
+        farmer.setPincode(dto.getPincode());
+        farmer.setEducation(dto.getEducation());
+        farmer.setExperience(dto.getExperience());
+        farmer.setCurrentCrop(dto.getCurrentCrop());
+        farmer.setProposedCrop(dto.getProposedCrop());
+        farmer.setBankName(dto.getBankName());
+        farmer.setAccountNumber(dto.getAccountNumber());
+        farmer.setBranchName(dto.getBranchName());
+        farmer.setIfscCode(dto.getIfscCode());
+        farmer.setDocumentType(dto.getDocumentType());
+        farmer.setDocumentNumber(dto.getDocumentNumber());
+        return farmer;
     }
 }
