@@ -60,6 +60,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/test-login").permitAll()
                 .requestMatchers("/api/auth/test-registration").permitAll()
                 .requestMatchers("/api/test").permitAll()
+                .requestMatchers("/error").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

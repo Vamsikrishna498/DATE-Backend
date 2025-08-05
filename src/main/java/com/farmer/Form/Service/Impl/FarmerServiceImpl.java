@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,20 +29,89 @@ public class FarmerServiceImpl implements FarmerService {
 
     @Override
     public FarmerDTO createFarmer(FarmerDTO dto, MultipartFile photo, MultipartFile passbookPhoto,
-                                  MultipartFile aadhaar, MultipartFile soilTestCertificate) {
+                                  MultipartFile aadhaar, MultipartFile soilTestCertificate,
+                                  MultipartFile panFile, MultipartFile voterFile, MultipartFile ppbFile) {
         try {
-            String photoFile = (photo != null && !photo.isEmpty())
-                    ? fileStorageService.storeFile(photo, "photos") : null;
-            String passbookFile = (passbookPhoto != null && !passbookPhoto.isEmpty())
-                    ? fileStorageService.storeFile(passbookPhoto, "passbooks") : null;
-            String aadhaarFile = (aadhaar != null && !aadhaar.isEmpty())
-                    ? fileStorageService.storeFile(aadhaar, "documents") : null;
-            String soilTestFile = (soilTestCertificate != null && !soilTestCertificate.isEmpty())
-                    ? fileStorageService.storeFile(soilTestCertificate, "soil-tests") : null;
+            // First save the farmer to get the ID
+            Farmer farmer = FarmerMapper.toEntity(dto, null, null, null, null, null, null, null, null);
+            farmer.setCreatedAt(LocalDateTime.now());
+            farmer.setUpdatedAt(LocalDateTime.now());
+            
+            Farmer savedFarmer = farmerRepository.save(farmer);
+            Long farmerId = savedFarmer.getId();
+            
+            // Now handle file uploads with the farmer ID
+            String photoFile = null;
+            if (photo != null && !photo.isEmpty()) {
+                String originalFilename = photo.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                photoFile = "farmer_" + farmerId + extension;
+                fileStorageService.storeFileWithName(photo, "photos", photoFile);
+            }
+            
+            String passbookFile = null;
+            if (passbookPhoto != null && !passbookPhoto.isEmpty()) {
+                String originalFilename = passbookPhoto.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                passbookFile = "passbook_" + farmerId + extension;
+                fileStorageService.storeFileWithName(passbookPhoto, "passbooks", passbookFile);
+            }
+            
+            String aadhaarFile = null;
+            if (aadhaar != null && !aadhaar.isEmpty()) {
+                String originalFilename = aadhaar.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                aadhaarFile = "aadhaar_" + farmerId + extension;
+                fileStorageService.storeFileWithName(aadhaar, "documents", aadhaarFile);
+            }
+            
+            String soilTestFile = null;
+            if (soilTestCertificate != null && !soilTestCertificate.isEmpty()) {
+                String originalFilename = soilTestCertificate.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                soilTestFile = "soil_" + farmerId + extension;
+                fileStorageService.storeFileWithName(soilTestCertificate, "soil-certificates", soilTestFile);
+            }
+            
+            String panFileName = null;
+            if (panFile != null && !panFile.isEmpty()) {
+                String originalFilename = panFile.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                panFileName = "pan_" + farmerId + extension;
+                fileStorageService.storeFileWithName(panFile, "documents", panFileName);
+            }
+            
+            String voterFileName = null;
+            if (voterFile != null && !voterFile.isEmpty()) {
+                String originalFilename = voterFile.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                voterFileName = "voter_" + farmerId + extension;
+                fileStorageService.storeFileWithName(voterFile, "documents", voterFileName);
+            }
+            
+            String voterIdFileName = voterFileName; // Same file for both fields
+            String ppbFileName = null;
+            if (ppbFile != null && !ppbFile.isEmpty()) {
+                String originalFilename = ppbFile.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                ppbFileName = "ppb_" + farmerId + extension;
+                fileStorageService.storeFileWithName(ppbFile, "documents", ppbFileName);
+            }
 
-            Farmer farmer = FarmerMapper.toEntity(dto, photoFile, passbookFile, aadhaarFile, soilTestFile);
-            Farmer saved = farmerRepository.save(farmer);
-            return FarmerMapper.toDto(saved);
+            // Map alternativeType from alternativeRelationType if not set
+            if (dto.getAlternativeType() == null && dto.getAlternativeRelationType() != null) {
+                dto.setAlternativeType(dto.getAlternativeRelationType());
+            }
+
+            // Update the farmer with file names
+            Farmer updatedFarmer = FarmerMapper.toEntity(dto, photoFile, passbookFile, aadhaarFile, soilTestFile, 
+                                                panFileName, voterFileName, voterIdFileName, ppbFileName);
+            updatedFarmer.setId(farmerId);
+            updatedFarmer.setCreatedAt(savedFarmer.getCreatedAt());
+            updatedFarmer.setUpdatedAt(LocalDateTime.now());
+            
+            Farmer finalSaved = farmerRepository.save(updatedFarmer);
+            return FarmerMapper.toDto(finalSaved);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to store uploaded files", e);
@@ -66,30 +135,75 @@ public class FarmerServiceImpl implements FarmerService {
     @Override
     public FarmerDTO updateFarmer(Long id, FarmerDTO dto,
                                   MultipartFile photo, MultipartFile passbookPhoto,
-                                  MultipartFile aadhaar, MultipartFile soilTestCertificate) {
+                                  MultipartFile aadhaar, MultipartFile soilTestCertificate,
+                                  MultipartFile panFile, MultipartFile voterFile, MultipartFile ppbFile) {
 
         Farmer existing = farmerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Farmer not found"));
 
         try {
-            String photoFile = (photo != null && !photo.isEmpty())
-                    ? fileStorageService.storeFile(photo, "photos")
-                    : existing.getPhotoFileName();
+            String photoFile = existing.getPhotoFileName();
+            if (photo != null && !photo.isEmpty()) {
+                String originalFilename = photo.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                photoFile = "farmer_" + id + extension;
+                fileStorageService.storeFileWithName(photo, "photos", photoFile);
+            }
 
-            String passbookFile = (passbookPhoto != null && !passbookPhoto.isEmpty())
-                    ? fileStorageService.storeFile(passbookPhoto, "passbooks")
-                    : existing.getPassbookFileName();
+            String passbookFile = existing.getPassbookFileName();
+            if (passbookPhoto != null && !passbookPhoto.isEmpty()) {
+                String originalFilename = passbookPhoto.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                passbookFile = "passbook_" + id + extension;
+                fileStorageService.storeFileWithName(passbookPhoto, "passbooks", passbookFile);
+            }
 
-            String aadhaarFile = (aadhaar != null && !aadhaar.isEmpty())
-                    ? fileStorageService.storeFile(aadhaar, "documents")
-                    : existing.getDocumentFileName();
+            String aadhaarFile = existing.getAadhaarFileName();
+            if (aadhaar != null && !aadhaar.isEmpty()) {
+                String originalFilename = aadhaar.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                aadhaarFile = "aadhaar_" + id + extension;
+                fileStorageService.storeFileWithName(aadhaar, "documents", aadhaarFile);
+            }
 
-            String soilTestFile = (soilTestCertificate != null && !soilTestCertificate.isEmpty())
-                    ? fileStorageService.storeFile(soilTestCertificate, "soil-tests")
-                    : existing.getSoilTestCertificateFileName();
+            String soilTestFile = existing.getSoilTestCertificateFileName();
+            if (soilTestCertificate != null && !soilTestCertificate.isEmpty()) {
+                String originalFilename = soilTestCertificate.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                soilTestFile = "soil_" + id + extension;
+                fileStorageService.storeFileWithName(soilTestCertificate, "soil-certificates", soilTestFile);
+            }
 
-            Farmer updated = FarmerMapper.toEntity(dto, photoFile, passbookFile, aadhaarFile, soilTestFile);
+            String panFileName = existing.getPanFileName();
+            if (panFile != null && !panFile.isEmpty()) {
+                String originalFilename = panFile.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                panFileName = "pan_" + id + extension;
+                fileStorageService.storeFileWithName(panFile, "documents", panFileName);
+            }
+
+            String voterFileName = existing.getVoterFileName();
+            if (voterFile != null && !voterFile.isEmpty()) {
+                String originalFilename = voterFile.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                voterFileName = "voter_" + id + extension;
+                fileStorageService.storeFileWithName(voterFile, "documents", voterFileName);
+            }
+
+            String voterIdFileName = voterFileName; // Same file for both fields
+            String ppbFileName = existing.getPpbFileName();
+            if (ppbFile != null && !ppbFile.isEmpty()) {
+                String originalFilename = ppbFile.getOriginalFilename();
+                String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+                ppbFileName = "ppb_" + id + extension;
+                fileStorageService.storeFileWithName(ppbFile, "documents", ppbFileName);
+            }
+
+            Farmer updated = FarmerMapper.toEntity(dto, photoFile, passbookFile, aadhaarFile, soilTestFile,
+                                                panFileName, voterFileName, voterIdFileName, ppbFileName);
             updated.setId(existing.getId());
+            updated.setCreatedAt(existing.getCreatedAt());
+            updated.setUpdatedAt(LocalDateTime.now());
 
             Farmer saved = farmerRepository.save(updated);
             return FarmerMapper.toDto(saved);
@@ -107,10 +221,17 @@ public class FarmerServiceImpl implements FarmerService {
         Farmer updated = FarmerMapper.toEntity(dto,
                 existing.getPhotoFileName(),
                 existing.getPassbookFileName(),
-                existing.getDocumentFileName(),
-                existing.getSoilTestCertificateFileName());
+                existing.getAadhaarFileName(),
+                existing.getSoilTestCertificateFileName(),
+                existing.getPanFileName(),
+                existing.getVoterFileName(),
+                existing.getVoterIdFileName(),
+                existing.getPpbFileName());
 
         updated.setId(existing.getId());
+        updated.setCreatedAt(existing.getCreatedAt());
+        updated.setUpdatedAt(LocalDateTime.now());
+        
         return FarmerMapper.toDto(farmerRepository.save(updated));
     }
 
@@ -138,6 +259,8 @@ public class FarmerServiceImpl implements FarmerService {
 
     @Override
     public Farmer createFarmerBySuperAdmin(Farmer farmer) {
+        farmer.setCreatedAt(LocalDateTime.now());
+        farmer.setUpdatedAt(LocalDateTime.now());
         return farmerRepository.save(farmer);
     }
 
@@ -156,6 +279,7 @@ public class FarmerServiceImpl implements FarmerService {
         farmer.setBlock(updatedFarmer.getBlock());
         farmer.setVillage(updatedFarmer.getVillage());
         farmer.setPincode(updatedFarmer.getPincode());
+        farmer.setUpdatedAt(LocalDateTime.now());
         // ... update other fields as needed
         return farmerRepository.save(farmer);
     }
@@ -201,7 +325,7 @@ public class FarmerServiceImpl implements FarmerService {
         
         farmer.setKycStatus(Farmer.KycStatus.APPROVED);
         farmer.setKycApproved(true);
-        farmer.setKycReviewedDate(LocalDate.now());
+        farmer.setKycReviewedDate(LocalDateTime.now().toLocalDate());
         farmer.setKycReviewedBy(employeeEmail);
         farmer.setKycRejectionReason(null);
         farmer.setKycReferBackReason(null);
@@ -221,7 +345,7 @@ public class FarmerServiceImpl implements FarmerService {
         
         farmer.setKycStatus(Farmer.KycStatus.REFER_BACK);
         farmer.setKycApproved(false);
-        farmer.setKycReviewedDate(LocalDate.now());
+        farmer.setKycReviewedDate(LocalDateTime.now().toLocalDate());
         farmer.setKycReviewedBy(employeeEmail);
         farmer.setKycReferBackReason(reason);
         farmer.setKycRejectionReason(null);
@@ -241,7 +365,7 @@ public class FarmerServiceImpl implements FarmerService {
         
         farmer.setKycStatus(Farmer.KycStatus.REJECTED);
         farmer.setKycApproved(false);
-        farmer.setKycReviewedDate(LocalDate.now());
+        farmer.setKycReviewedDate(LocalDateTime.now().toLocalDate());
         farmer.setKycReviewedBy(employeeEmail);
         farmer.setKycRejectionReason(reason);
         farmer.setKycReferBackReason(null);

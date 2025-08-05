@@ -3,6 +3,7 @@ package com.farmer.Form.DTO;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.annotation.JsonFormat;
  
 import java.time.LocalDate;
  
@@ -29,6 +30,7 @@ public class EmployeeDTO {
  
     @NotNull(message = "Date of birth is required")
     @Past(message = "Date of birth must be in the past")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
  
     // Contact Details
@@ -44,7 +46,7 @@ public class EmployeeDTO {
  
     private String relationName;
  
-    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Enter a valid 10-digit alternate number")
+    // Make altNumber completely optional (no validation)
     private String altNumber;
  
     private String altNumberType;
@@ -67,31 +69,24 @@ public class EmployeeDTO {
  
     private String sector;
  
-    // Professional Details
-    @NotBlank(message = "Education is required")
+    // Professional Details - Make these optional for now
     private String education;
  
-    @NotBlank(message = "Experience is required")
     private String experience;
  
-    // Bank Details
-    @NotBlank(message = "Bank name is required")
+    // Bank Details - Make these optional for now
     private String bankName;
  
-    @NotBlank(message = "Account number is required")
     private String accountNumber;
  
-    @NotBlank(message = "Branch name is required")
     private String branchName;
  
     @Pattern(regexp = "^[A-Z]{4}0[A-Z0-9]{6}$", message = "Enter a valid IFSC code")
     private String ifscCode;
  
-    // Document Info
-    @NotBlank(message = "Document type is required")
+    // Document Info - Make these optional for now
     private String documentType;
  
-    @NotBlank(message = "Document number is required")
     private String documentNumber;
  
     // Portal Access
@@ -101,7 +96,7 @@ public class EmployeeDTO {
     @NotBlank(message = "Access status is required")
     private String accessStatus;
  
-    // File Uploads (Validate in service or controller)
+    // File Uploads (for @ModelAttribute)
     private MultipartFile photo;
     private MultipartFile passbook;
     private MultipartFile documentFile;
