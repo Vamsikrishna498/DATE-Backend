@@ -35,15 +35,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // Define a list of public URLs
-        String[] publicUrls = { "/api/auth", "/error" };
+        String[] publicUrls = { 
+            "/api/auth/login", 
+            "/api/auth/register", 
+            "/api/auth/register-with-role", 
+            "/api/auth/register-simple", 
+            "/api/auth/send-otp", 
+            "/api/auth/verify-otp", 
+            "/api/auth/forgot-password", 
+            "/api/auth/reset-password/confirm", 
+            "/api/auth/forgot-user-id", 
+            "/api/auth/captcha", 
+            "/api/captcha", 
+            "/api/otp", 
+            "/api/auth/test", 
+            "/api/auth/test-login", 
+            "/api/auth/test-registration", 
+            "/api/test",
+            "/error" 
+        };
 
         // Get the requested URL
         String requestUri = request.getRequestURI();
+        log.info("Requested URL: {}", requestUri);
 
         // Check if the requested URL is public
         boolean isPublicUrl = false;
         for (String url : publicUrls) {
-            if (requestUri.startsWith(url)) {
+            if (requestUri.equals(url)) {
                 isPublicUrl = true;
                 break;
             }
@@ -51,9 +70,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // If it's a public URL, skip token validation
         if (isPublicUrl) {
+            log.info("Public URL detected, skipping token validation: {}", requestUri);
             filterChain.doFilter(request, response);
             return;
         }
+        
+        log.info("Protected URL detected, checking token: {}", requestUri);
 
         // Get the JWT token from the Authorization header
         String authorizationHeader = request.getHeader("Authorization");

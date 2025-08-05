@@ -24,10 +24,12 @@ import com.farmer.Form.Service.OtpService;
 import com.farmer.Form.Service.UserService;
 import com.farmer.Form.security.JwtUtil;
 import com.farmer.Form.exception.UserNotApprovedException;
+import com.farmer.Form.Repository.UserRepository;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -40,6 +42,8 @@ public class AuthController {
     private final OtpService otpService;
     private final EmailService emailService;
     private final CountryStateCityService countryService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
 
     // ✅ LOGIN
     @PostMapping("/login")
@@ -333,6 +337,41 @@ public class AuthController {
             return ResponseEntity.ok("User approved and role assigned successfully. Credentials sent to user email.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    // ✅ Change password for authenticated user
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody Map<String, String> request, Authentication authentication) {
+        try {
+            String currentPassword = request.get("currentPassword");
+            String newPassword = request.get("newPassword");
+            String confirmPassword = request.get("confirmPassword");
+            
+            if (currentPassword == null || newPassword == null || confirmPassword == null) {
+                return ResponseEntity.badRequest().body("Current password, new password, and confirm password are required");
+            }
+            
+            if (!newPassword.equals(confirmPassword)) {
+                return ResponseEntity.badRequest().body("New password and confirm password do not match");
+            }
+            
+            String userEmail = authentication.getName();
+            User user = userService.getUserByEmailOrPhone(userEmail);
+            
+            // Verify current password
+            if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+                return ResponseEntity.badRequest().body("Current password is incorrect");
+            }
+            
+            // Update password
+            user.setPassword(passwordEncoder.encode(newPassword));
+            user.setForcePasswordChange(false);
+            userRepository.save(user);
+            
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error changing password: " + e.getMessage());
         }
     }
 

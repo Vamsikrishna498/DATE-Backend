@@ -44,10 +44,25 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/**").permitAll() // Allow all /api endpoints
+                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/register-with-role").permitAll()
+                .requestMatchers("/api/auth/register-simple").permitAll()
+                .requestMatchers("/api/auth/send-otp").permitAll()
+                .requestMatchers("/api/auth/verify-otp").permitAll()
+                .requestMatchers("/api/auth/forgot-password").permitAll()
+                .requestMatchers("/api/auth/reset-password/confirm").permitAll()
+                .requestMatchers("/api/auth/forgot-user-id").permitAll()
+                .requestMatchers("/api/auth/captcha").permitAll()
+                .requestMatchers("/api/captcha/**").permitAll()
+                .requestMatchers("/api/otp/**").permitAll()
+                .requestMatchers("/api/auth/test").permitAll()
+                .requestMatchers("/api/auth/test-login").permitAll()
+                .requestMatchers("/api/auth/test-registration").permitAll()
+                .requestMatchers("/api/test").permitAll()
                 .anyRequest().authenticated()
-            );
-            // .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
